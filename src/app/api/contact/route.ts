@@ -25,6 +25,21 @@ async function sendWhatsApp(text: string) {
   return { sent: true };
 }
 
+/** Telegram push — reliable, no opt-in dance. Best-effort. */
+async function sendTelegram(text: string) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return { skipped: true };
+
+  const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text, disable_web_page_preview: true }),
+  });
+  if (!res.ok) throw new Error(`telegram ${res.status}`);
+  return { sent: true };
+}
+
 async function sendEmail(name: string, email: string, message: string) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return { skipped: true };
@@ -63,22 +78,20 @@ export async function POST(request: Request) {
     );
   }
 
-  const wa = `New portfolio message\n${name} (${email})\n\n${message}`;
+  const ping = `New portfolio message\n${name} (${email})\n\n${message}`;
 
-  const [emailRes, waRes] = await Promise.allSettled([
+  const results = await Promise.allSettled([
     sendEmail(name, email, message),
-    sendWhatsApp(wa),
+    sendWhatsApp(ping),
+    sendTelegram(ping),
   ]);
 
-  const delivered =
-    (emailRes.status === "fulfilled" && emailRes.value.sent) ||
-    (waRes.status === "fulfilled" && waRes.value.sent);
-
-  const configured =
-    (emailRes.status === "fulfilled" && !emailRes.value.skipped) ||
-    (waRes.status === "fulfilled" && !waRes.value.skipped) ||
-    emailRes.status === "rejected" ||
-    waRes.status === "rejected";
+  const delivered = results.some(
+    (r) => r.status === "fulfilled" && r.value.sent,
+  );
+  const configured = results.some(
+    (r) => r.status === "rejected" || (r.status === "fulfilled" && !r.value.skipped),
+  );
 
   if (delivered) return Response.json({ ok: true });
 
