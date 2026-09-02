@@ -38,16 +38,25 @@ export function Hero() {
           )
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[var(--bg)]" />
+        {/* on small screens the figure sits behind the copy — scrim it back */}
+        <div className="absolute inset-0 bg-[var(--bg)]/60 md:hidden" />
       </div>
 
       <div className="container-page">
-        <p className="mb-4 font-display text-sm uppercase tracking-[0.3em] text-cyan text-glow-cyan">
-          {site.role}
-        </p>
-        <h1 className="max-w-2xl font-display text-4xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
-          {site.tagline}
+        <h1 className="max-w-[9ch] font-display text-5xl font-bold leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl">
+          {site.name}
+          <span className="text-cyan text-glow-cyan">.</span>
         </h1>
-        <p className="mt-6 max-w-md text-lg text-fg-dim">{site.specialization}</p>
+        <p className="mt-4 font-display text-xs uppercase tracking-[0.3em] text-cyan text-glow-cyan sm:text-sm">
+          {site.role} &nbsp;·&nbsp; {site.location}
+        </p>
+
+        <p className="mt-8 max-w-xl font-display text-xl font-medium leading-snug text-fg sm:text-3xl">
+          {site.tagline}
+        </p>
+        <p className="mt-4 max-w-md text-base text-fg-dim">
+          {site.specialization}
+        </p>
 
         <div className="mt-10 flex flex-wrap items-center gap-4">
           <CtaButton from="hero" />
