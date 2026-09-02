@@ -13,7 +13,7 @@ export const site = {
   // primary CTA → LinkedIn
   linkedin: "https://www.linkedin.com/in/srikaran-sankar",
   links: {
-    github: "https://github.com/mastersk07",
+    github: "https://github.com/mastersk0210-del",
     linkedin: "https://www.linkedin.com/in/srikaran-sankar",
     email: "mailto:mastersk0210@gmail.com",
     whatsapp: "https://wa.me/353894002480",
