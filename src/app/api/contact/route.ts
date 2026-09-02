@@ -4,6 +4,7 @@ import { site } from "@/lib/site";
 type Body = {
   name?: string;
   email?: string;
+  subject?: string;
   message?: string;
   company?: string; // honeypot — real people leave it blank
 };
@@ -40,7 +41,12 @@ async function sendTelegram(text: string) {
   return { sent: true };
 }
 
-async function sendEmail(name: string, email: string, message: string) {
+async function sendEmail(
+  name: string,
+  email: string,
+  subject: string,
+  message: string,
+) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return { skipped: true };
 
@@ -49,7 +55,7 @@ async function sendEmail(name: string, email: string, message: string) {
     from: process.env.CONTACT_FROM ?? "Portfolio <onboarding@resend.dev>",
     to: [process.env.CONTACT_TO ?? site.email],
     replyTo: email,
-    subject: `Portfolio contact — ${name}`,
+    subject: `[Portfolio] ${subject}`,
     text: `${message}\n\n— ${name} <${email}>`,
   });
   if (error) throw new Error(error.message);
@@ -66,22 +72,31 @@ export async function POST(request: Request) {
 
   const name = body.name?.trim() ?? "";
   const email = body.email?.trim() ?? "";
+  const subject = body.subject?.trim() ?? "";
   const message = body.message?.trim() ?? "";
 
   // silently accept bots so they don't retry
   if (body.company) return Response.json({ ok: true });
 
-  if (name.length < 2 || !EMAIL_RE.test(email) || message.length < 10) {
+  if (
+    name.length < 2 ||
+    !EMAIL_RE.test(email) ||
+    subject.length < 3 ||
+    message.length < 10
+  ) {
     return Response.json(
-      { error: "Please fill in your name, a valid email, and a short message." },
+      {
+        error:
+          "Please fill in your name, a valid email, a subject, and a short message.",
+      },
       { status: 422 },
     );
   }
 
-  const ping = `New portfolio message\n${name} (${email})\n\n${message}`;
+  const ping = `New portfolio message\n${subject}\n${name} (${email})\n\n${message}`;
 
   const results = await Promise.allSettled([
-    sendEmail(name, email, message),
+    sendEmail(name, email, subject, message),
     sendWhatsApp(ping),
     sendTelegram(ping),
   ]);

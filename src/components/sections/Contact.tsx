@@ -10,6 +10,7 @@ import { track } from "@/lib/analytics";
 type Fields = {
   name: string;
   email: string;
+  subject: string;
   message: string;
   company: string; // honeypot
 };
@@ -154,6 +155,20 @@ export function Contact() {
               {errors.email && (
                 <p className="mt-1 text-xs text-magenta">
                   A valid email so I can reply.
+                </p>
+              )}
+            </div>
+
+            <div>
+              <input
+                placeholder="Subject"
+                className={inputClass}
+                aria-invalid={!!errors.subject}
+                {...register("subject", { required: true, minLength: 3 })}
+              />
+              {errors.subject && (
+                <p className="mt-1 text-xs text-magenta">
+                  A subject line — e.g. &ldquo;ML Engineer role at Acme&rdquo;.
                 </p>
               )}
             </div>
