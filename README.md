@@ -1,7 +1,8 @@
-# SK — Portfolio
+# Srikaran Sankar — Portfolio
 
 High-converting, 3D-interactive portfolio with anti-gravity scroll and a neon
-aesthetic, built to showcase 4 AI models and book calls.
+aesthetic. Positions Srikaran as an AI/ML Engineer who owns the path from
+raw data to production ML.
 
 Full spec and milestones: [`TASK.md`](./TASK.md).
 
@@ -12,8 +13,8 @@ Full spec and milestones: [`TASK.md`](./TASK.md).
 - **Lenis** + **GSAP ScrollTrigger** — smooth / anti-gravity scroll
 - **Tailwind CSS v4** — neon design tokens in [`src/app/globals.css`](./src/app/globals.css)
 - **motion** — 2D section reveals
-- **Vercel Analytics** — funnel events (`cta_book_click`, `model_open`, …)
-- **Cal.com** — primary CTA (Book a call)
+- **Vercel Analytics** — funnel events (`cta_click`, `project_open`, …)
+- Primary CTA → LinkedIn
 
 ## Develop
 
@@ -31,22 +32,25 @@ src/
   app/
     layout.tsx            root layout: fonts, metadata, SmoothScroll, Analytics
     page.tsx              single-page scroll site
-    models/[slug]/        model deep-dive pages (SSG from src/data/models.ts)
+    work/[slug]/          project deep-dive pages (SSG from src/data/projects.ts)
     sitemap.ts robots.ts not-found.tsx
   components/
     SmoothScroll.tsx      Lenis provider (GSAP ScrollTrigger wiring in M2)
     SiteNav.tsx Footer.tsx
-    sections/             Hero · About · Models · Skills · Contact
+    sections/             Hero · About · Projects · Experience · Skills · Contact
     three/ParticleField.tsx   M0 placeholder cloud; full sim in M3
     ui/                   CtaButton · Section
-  data/models.ts          the 4 models — fill from TASK.md §6
+  data/projects.ts        the projects — TODO fields need Srikaran's real numbers/links
   lib/                    site config · analytics · hooks (reduced-motion, WebGL)
 ```
 
 ## Configure before launch
 
-Edit [`src/lib/site.ts`](./src/lib/site.ts): real Cal.com URL, social links, domain.
-Fill [`src/data/models.ts`](./src/data/models.ts) with the 4 models.
+- [`src/data/projects.ts`](./src/data/projects.ts) — fill every `TODO`: final model
+  scores, dataset size/source, repo URLs, live Streamlit / demo-video links.
+- [`src/lib/site.ts`](./src/lib/site.ts) — confirm the domain (`srithings.info`)
+  and links.
+- Add a headshot and a résumé PDF to `public/`.
 
 ## Deploy (Vercel)
 

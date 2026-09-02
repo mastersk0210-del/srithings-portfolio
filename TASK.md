@@ -1,8 +1,8 @@
 # Portfolio Website — Build Task
 
-**Owner:** SK — AI Engineer (recent graduate)
-**Goal:** A high-converting, 3D-interactive portfolio with anti-gravity scroll motion and a neon visual style, built to showcase 4 AI models and land calls with recruiters / clients.
-**Primary outcome:** A visitor understands "SK builds and ships AI models" within 5 seconds, explores the 4 models, and books a call.
+**Owner:** Srikaran Sankar — AI/ML Engineer (Dublin; MSc Artificial Intelligence, NCI, 2026)
+**Goal:** A high-converting, 3D-interactive portfolio with anti-gravity scroll motion and a neon visual style, positioning Srikaran as an engineer who owns the path from raw data to production ML.
+**Primary outcome:** A recruiter understands "Srikaran builds trustworthy data pipelines and ships ML on top of them" within 5 seconds, reads a project or two, and connects on LinkedIn.
 
 ---
 
@@ -11,27 +11,27 @@
 | Metric | Target |
 |---|---|
 | Hero → contact scroll-through rate | > 25% of sessions reach the contact section |
-| Primary CTA ("Book a call") click rate | > 8% of unique visitors |
-| "View model" clicks | > 40% of visitors open at least one model page |
+| Primary CTA (LinkedIn) click rate | > 8% of unique visitors |
+| Project-open rate | > 40% of visitors open at least one `/work/[slug]` page |
 | Lighthouse Performance (mobile) | ≥ 80 (3D route), ≥ 95 (fallback) |
 | Largest Contentful Paint | < 2.5s on 4G |
 | Bounce rate | < 45% |
 | Works with WebGL disabled | Yes — graceful 2D fallback |
 
-"High-converting" = clear value prop, one dominant CTA (Book a call) repeated, proof via real metrics + demos, low-friction booking, fast load.
+"High-converting" = clear value prop, one dominant CTA (Connect on LinkedIn) repeated, proof via real metrics, low friction, fast load.
 
 ---
 
 ## 2. Scope
 
 ### In
-- Single-page scroll site + `/models/[slug]` deep-dive pages (4 models)
+- Single-page scroll site + `/work/[slug]` deep-dive pages (2 projects for v1)
 - 3D hero: **glowing particle field** reacting to pointer + scroll velocity (scatter on fast scroll, drift + settle on stop)
 - Anti-gravity scroll: elements float in, drift slightly upward at rest, parallax layers, section pinning
 - Neon aesthetic: dark base, bloom/glow, gradient light trails
-- Sections: Hero, About, Models (×4), Skills/Stack, Testimonials (optional v1), Contact
-- Booking (Cal.com, primary CTA) + contact form (secondary)
-- Per-model: metrics table, architecture summary, and where feasible a lightweight live inference demo or hosted Space embed
+- Sections: Hero, About, Work (×2), Experience, Skills/Stack, Contact
+- Primary CTA → LinkedIn; secondary → email; contact form (Resend) as tertiary
+- Per-project: metrics tiles + problem / data / approach / outcome / limitations, and a demo (Streamlit link or screen-recording) where available
 - Analytics + event tracking
 - SEO meta, OG images, sitemap
 - Responsive (mobile-first), reduced-motion + no-WebGL fallbacks
@@ -41,7 +41,7 @@
 - Auth, dashboard
 - Multi-language
 - Light theme (dark only)
-- Self-hosted GPU inference (use hosted demo / HF Space / cached sample outputs instead)
+- **Amazon "Fisher Model" as a case study** — confidential, not shown. Amazon appears in Experience only, described at CV level.
 
 ---
 
@@ -49,58 +49,63 @@
 
 | Layer | Choice | Notes |
 |---|---|---|
-| Framework | Next.js (App Router) | SSG for content, SEO, Vercel deploy |
+| Framework | Next.js 16 (App Router) | SSG for content, SEO, Vercel deploy |
 | 3D | React Three Fiber + drei | Declarative Three.js |
-| Post-processing | @react-three/postprocessing | Bloom / glow for neon particle field |
+| Post-processing | @react-three/postprocessing | Bloom / glow for the particle field |
 | Scroll | Lenis + GSAP ScrollTrigger | Anti-gravity float, pinning, timelines |
-| Styling | Tailwind CSS + CSS custom props for neon tokens | |
-| Animation (2D) | Framer Motion | Section reveals, text |
-| Forms | React Hook Form + Resend | Contact email delivery |
-| Booking | Cal.com embed | Primary CTA |
-| Model demos | HF Spaces / Gradio embed, or serverless API route calling a hosted endpoint, or pre-computed sample outputs | Pick per model in M4 |
-| Analytics | Vercel Analytics + PostHog (events) | |
-| Hosting | Vercel | |
+| Styling | Tailwind CSS v4 + CSS custom props for neon tokens | |
+| Animation (2D) | motion | Section reveals, text |
+| Forms | React Hook Form + Resend | Contact email delivery (M5) |
+| Analytics | Vercel Analytics | Funnel events |
+| Hosting | Vercel | Domain: `srithings.info` |
 
 ---
 
 ## 4. Visual direction — "neon anti-gravity"
 
-- **Palette:** near-black background (#05060A), electric cyan (#00E5FF), magenta (#FF2ECD), violet (#7A5CFF); white text at 90% opacity.
-- **Particle field:** 10k–40k points, additive blending, emissive color mixed cyan↔magenta by velocity; bloom post-processing. Curl-noise drift; pointer repulsion; scroll velocity drives scatter amplitude; on scroll stop, points ease back toward a loose form (e.g. a neural-net / point-cloud silhouette).
+- **Palette:** near-black background (#05060A), electric cyan (#00E5FF), magenta (#FF2ECD), violet (#7A5CFF); white text at ~90% opacity.
+- **Particle field:** 10k–40k points, additive blending, emissive color mixed cyan↔magenta by velocity; bloom post-processing. Curl-noise drift; pointer repulsion; scroll velocity drives scatter amplitude; on scroll stop, points ease back toward a loose form.
 - **Motion feel:** low gravity — ease with slight overshoot, subtle upward drift at rest.
-- **Typography:** one bold display face (Space Grotesk or Clash Display) + Inter for body.
+- **Typography:** Space Grotesk (display) + Inter (body), via `next/font`.
 - **Grain + vignette** overlay for depth. Custom glow cursor on desktop.
 
 ---
 
 ## 5. Section-by-section
 
-1. **Hero** — "SK — AI Engineer. I build and ship models." + one-line specialization + **Book a call** button (secondary: "See the models" scroll). Particle field centerpiece. Scroll hint.
-2. **About** — 2–3 sentences: focus area, graduation, stack, availability badge. Headshot or point-cloud avatar. Key facts (degree, focus: NLP / CV / etc., location, open to work).
-3. **Models (×4)** — Cards float in with anti-gravity stagger. Each card: model name, task, headline metric (e.g. "F1 0.91", "12ms inference", "SOTA-ish on X"), dataset, one-line what it does. Click → `/models/[slug]`.
-4. **Model deep-dive page** — Problem & motivation · Data (source, size, preprocessing) · Architecture (diagram + summary) · Training (hardware, epochs, tricks) · Results (metrics table, comparison baseline, confusion matrix / curves) · Live demo or sample outputs · Limitations · Links (repo, weights, paper/Space). Sticky "next model" + Book a call.
-5. **Skills / Stack** — Grid or orbiting 3D logos: Python, PyTorch/TensorFlow, HF Transformers, scikit-learn, CUDA, Docker, FastAPI, AWS/GCP, MLflow/W&B, vector DBs, etc.
-6. **Testimonials** *(optional v1)* — advisor / teammate quotes if available; otherwise skip and add later.
-7. **Contact** — Big **Book a call** (Cal.com inline embed) + secondary form (name, email, message) + email + GitHub / LinkedIn / Hugging Face / Kaggle. Repeat value prop.
+1. **Hero** — "AI/ML Engineer" eyebrow + "I build the pipeline from raw data to production ML." + one-line specialization + **Connect on LinkedIn** (secondary: "See the work"). Particle field centerpiece. Scroll hint.
+2. **About** — 2–3 sentences: data-engineering + applied-ML focus, Amazon/Ennuviz, MSc AI Dublin. Facts: focus, location, status (open to work · Stamp 2), studying. Headshot / point-cloud avatar.
+3. **Work (×2)** — Cards float in with anti-gravity stagger. Each card: name, task, headline metric, one-liner. Click → `/work/[slug]`.
+   - `hr-recruitment-automation` — AI-Driven HR Recruitment Automation (MSc). Headline: 6 min → 4.4 s CV processing.
+   - `skill-gap-severity-prediction` — Career Readiness & Skill-Gap Severity Prediction (MSc). Headline: 82 engineered features.
+4. **Project deep-dive page** — Problem · Data · Approach · Outcome · Limitations/next · Stack · Demo · Links · "Next project" + CTA.
+5. **Experience** — Amazon (Associate ML Engineer, Sep 2024–Aug 2025) and Ennuviz (Trainee, Dec 2023–Jun 2024), CV-level bullets, no confidential detail.
+6. **Skills / Stack** — Languages · ML/AI · Data engineering · Delivery · Analytics & BI · Automation.
+7. **Contact** — **Connect on LinkedIn** (primary) + Email (secondary) + form (name, email, message) + GitHub / LinkedIn / srithings.info.
 
 ---
 
-## 6. The 4 models — content to gather (fill before M4)
+## 6. Content still needed from Srikaran (fill the `TODO`s in `src/data/projects.ts`)
 
-For each model:
+**AI-Driven HR Recruitment Automation**
+- [ ] Dataset: size / source of the CVs used
+- [ ] Accuracy of screening vs. a human baseline (or whatever eval you ran)
+- [ ] % reduction in manual review
+- [ ] Repo URL · demo video / screen-recording
+- [ ] Real parsing failure modes + any bias check
 
-| Field | Model 1 | Model 2 | Model 3 | Model 4 |
-|---|---|---|---|---|
-| Name / slug | | | | |
-| Task (e.g. text classification, segmentation) | | | | |
-| Dataset (name, size, source, license) | | | | |
-| Architecture (base model / from scratch) | | | | |
-| Key metrics + baseline to compare | | | | |
-| Training setup (GPU, time, framework) | | | | |
-| Demo option (HF Space / API / sample outputs) | | | | |
-| Repo URL / weights URL | | | | |
-| 3 charts or visuals | | | | |
-| Known limitations | | | | |
+**Career Readiness & Skill-Gap Severity Prediction**
+- [ ] Dataset: rows, source, how "severity" is labelled
+- [ ] Which model families you compared, and how many
+- [ ] Best model + its headline metric (accuracy / F1 / MAE …)
+- [ ] Live Streamlit URL · repo URL
+- [ ] Real limitations (label subjectivity, population)
+
+**Site-wide**
+- [ ] Headshot → `public/`
+- [ ] Résumé PDF → `public/` (link it from About / Contact)
+- [ ] Confirm `srithings.info` is the deploy target (replacing the current site)
+- [ ] A 3rd project? (optional — 2 is fine, 3 fills the grid better)
 
 ---
 
@@ -108,51 +113,37 @@ For each model:
 
 - Lazy-load the 3D canvas; gradient/poster until hydrated.
 - `prefers-reduced-motion`: disable scroll physics + particle simulation, render a static neon composition.
-- WebGL detection; no WebGL → 2D hero (CSS gradient + static point-cloud image). All content reachable.
+- WebGL detection; no WebGL → 2D hero (CSS gradient). All content reachable.
 - Cap DPR ~1.5; pause `useFrame` loop when canvas off-screen (IntersectionObserver).
-- Particle sim in a single BufferGeometry; update via shader or typed-array loop, no per-point React state.
+- Particle sim in a single BufferGeometry; typed-array / shader update, no per-point React state.
 - Fonts via `next/font`, subset, `display: swap`.
 - Semantic HTML, visible focus, alt text, labels, text contrast ≥ 4.5:1.
-- Demo embeds lazy-loaded (`loading="lazy"` iframes), behind a click-to-load poster.
 
 ---
 
 ## 8. Milestones
 
-- [~] **M0 — Setup:** Next.js 16 + Tailwind v4 + Lenis + R3F + GSAP + motion installed ✓ · neon tokens in `globals.css` ✓ · section skeleton + model route (SSG) ✓ · `next/font` (Space Grotesk + Inter) ✓ · Vercel Analytics + funnel events wired ✓ · CI workflow (lint + build) ✓ · lint + `next build` green ✓ · **remaining:** push to GitHub + import to Vercel, set real Cal.com / social / domain in `src/lib/site.ts`.
-- [ ] **M1 — Content skeleton:** All sections as static 2D, real copy, `models` data file with the 4 entries, responsive, Lighthouse ≥ 95.
+- [x] **M0 — Setup:** Next.js 16 + Tailwind v4 + Lenis + R3F + GSAP + motion ✓ · neon tokens ✓ · full section skeleton personalised from CV ✓ · `/work/[slug]` SSG route ✓ · `next/font` (Space Grotesk + Inter) ✓ · Vercel Analytics + events ✓ · CI (lint + build) ✓ · lint + `next build` green ✓ · **remaining:** push to GitHub + import to Vercel.
+- [ ] **M1 — Content:** fill every `TODO` in `src/data/projects.ts` from §6, add headshot + résumé, tighten copy, Lighthouse ≥ 95.
 - [ ] **M2 — Scroll system:** Lenis + ScrollTrigger, anti-gravity stagger/parallax, section pinning, reduced-motion fallback.
 - [ ] **M3 — Particle hero:** R3F particle field, pointer repulsion + scroll-velocity scatter + settle-to-form, bloom, WebGL fallback, perf budget met.
-- [ ] **M4 — Model pages:** `/models/[slug]` template + 4 filled write-ups with metrics tables and at least 2 live/interactive demos.
-- [ ] **M5 — Convert:** Cal.com embed wired as primary CTA everywhere, contact form + Resend, analytics events (`cta_book_click`, `model_open`, `demo_run`, `scroll_reach_contact`).
-- [ ] **M6 — Polish & launch:** OG images per model, SEO, cross-browser/device QA, custom domain, README.
+- [ ] **M4 — Project pages:** polish the `/work/[slug]` template, add charts/screenshots, embed or link the demos.
+- [ ] **M5 — Convert:** contact form + Resend, confirm analytics events (`cta_click`, `project_open`, `demo_run`, `scroll_reach_contact`, `contact_submit`).
+- [ ] **M6 — Polish & launch:** OG images per project, SEO, cross-browser/device QA, point `srithings.info` at Vercel.
 
 ---
 
-## 9. Content checklist (gather before M1)
+## 9. Resolved decisions
 
-- [ ] One-line value proposition + specialization phrase
-- [ ] The 4-models table (section 6) filled
-- [ ] Bio (short + long), degree + institution + grad date
-- [ ] Headshot / avatar
-- [ ] Resume PDF
-- [ ] Links: GitHub, LinkedIn, Hugging Face, Kaggle, email, Cal.com URL
-- [ ] Domain name
-- [ ] Any advisor/teammate testimonials (optional)
-
----
-
-## 10. Resolved decisions
-
-- **Field:** AI Engineer (creative-dev leaning) — the interactive site doubles as a frontend skill signal.
-- **Projects:** 4 AI models, each with a full deep-dive page.
+- **Positioning:** data-engineering ↔ applied-ML bridge, with a punchy outcome headline ("raw data to production ML").
+- **Work:** 2 real projects (both MSc). Fisher Model excluded (confidential). A 3rd optional.
 - **Hero:** glowing particle field (curl-noise drift, pointer repulsion, scroll-velocity scatter, settle-to-form on stop).
-- **Primary CTA:** Book a call (Cal.com), dominant. Contact form is secondary.
-- **Physics:** faked easing only (no Rapier) — particle field doesn't need a physics engine.
+- **Primary CTA:** Connect on LinkedIn. Email secondary. No Cal.com.
+- **Physics:** faked easing only (no Rapier).
+- **Domain:** `srithings.info` (pending Srikaran's confirmation).
 
-## 11. Open decisions
+## 10. Open decisions
 
-- Specialization to lead with (NLP / CV / multimodal / MLOps) — drives hero copy and skill ordering.
-- Demo strategy per model: HF Space embed vs. serverless API vs. pre-computed samples (decide in M4, per model).
-- Testimonials in v1 or defer.
-- Settle-to-form shape for the particle field (neural net, brain, point-cloud portrait, abstract).
+- Settle-to-form shape for the particle field (neural net, brain, abstract point cloud).
+- Whether to add a 3rd project.
+- Whether `srithings.info` fully replaces the current site there.

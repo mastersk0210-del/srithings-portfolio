@@ -1,8 +1,8 @@
 import { track as vercelTrack } from "@vercel/analytics";
 
 export type AppEvent =
-  | "cta_book_click"
-  | "model_open"
+  | "cta_click"
+  | "project_open"
   | "demo_run"
   | "scroll_reach_contact"
   | "contact_submit";

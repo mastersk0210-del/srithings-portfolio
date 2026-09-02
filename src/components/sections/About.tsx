@@ -2,25 +2,33 @@ import { site } from "@/lib/site";
 import { Section } from "@/components/ui/Section";
 
 const facts = [
-  { k: "Focus", v: site.specialization },
-  { k: "Location", v: site.location },
+  { k: "Focus", v: "Data engineering + applied ML" },
+  { k: "Based in", v: site.location },
   { k: "Status", v: site.availability },
-  { k: "Degree", v: "B.S. — AI Engineering (TODO)" },
+  { k: "Studying", v: "MSc Artificial Intelligence — NCI Dublin (2026)" },
 ];
 
 export function About() {
   return (
-    <Section id="about" eyebrow="About" title="Recent AI Engineering graduate, already shipping models.">
+    <Section
+      id="about"
+      eyebrow="About"
+      title="I make data trustworthy, then make it predict."
+    >
       <div className="grid gap-12 md:grid-cols-[1.4fr_1fr]">
         <div className="space-y-4 text-lg text-fg-dim">
           <p>
-            I design, train, and deploy machine-learning models end to end — from
-            data pipeline to evaluation to a running inference endpoint. TODO:
-            replace with real bio (2–3 sentences).
+            AI/ML Engineer with two years of hands-on experience building
+            end-to-end data solutions — designing and optimising ETL/ELT
+            pipelines, enforcing data quality, and turning that clean foundation
+            into machine-learning systems that run in production.
           </p>
           <p>
-            The four models below are production-minded: each has a metrics table,
-            a baseline comparison, and a way to try it.
+            I&apos;ve shipped this work at Amazon and Ennuviz, and I&apos;m
+            finishing an MSc in Artificial Intelligence in Dublin. I like the
+            unglamorous middle of the stack: the validation rules, the schema
+            decisions, the pipeline that fails loudly instead of quietly
+            corrupting a model.
           </p>
         </div>
         <dl className="neon-border grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-[var(--border)]">

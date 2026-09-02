@@ -42,10 +42,10 @@ export function Hero() {
         <div className="mt-10 flex flex-wrap items-center gap-4">
           <CtaButton from="hero" />
           <a
-            href="#models"
+            href="#work"
             className="neon-border inline-flex items-center gap-2 rounded-full px-6 py-3 font-display text-sm text-fg transition-colors hover:text-cyan"
           >
-            See the models
+            See the work
           </a>
         </div>
       </div>

@@ -1,21 +1,23 @@
 export const site = {
-  name: "SK",
-  role: "AI Engineer",
-  // one-liner shown in the hero — refine once specialization is locked
-  tagline: "I build and ship machine-learning models.",
-  specialization: "NLP · Computer Vision · MLOps",
-  location: "Remote",
-  availability: "Open to work",
+  name: "Srikaran Sankar",
+  shortName: "Srikaran",
+  role: "AI/ML Engineer",
+  // hero headline
+  tagline: "I build the pipeline from raw data to production ML.",
+  // sub-line under the headline
+  specialization:
+    "Two years bridging data engineering and applied ML — ETL/ELT, data quality, and models that ship.",
+  location: "Dublin, Ireland",
+  availability: "Open to work · Stamp 2 visa",
   email: "mastersk0210@gmail.com",
-  // primary CTA
-  calUrl: "https://cal.com/sk", // TODO: replace with real Cal.com link
+  // primary CTA → LinkedIn
+  linkedin: "https://www.linkedin.com/in/srikaran-sankar",
   links: {
-    github: "https://github.com/", // TODO
-    linkedin: "https://linkedin.com/in/", // TODO
-    huggingface: "https://huggingface.co/", // TODO
-    kaggle: "https://kaggle.com/", // TODO
+    github: "https://github.com/mastersk07",
+    linkedin: "https://www.linkedin.com/in/srikaran-sankar",
+    email: "mailto:mastersk0210@gmail.com",
   },
-  url: "https://sk-portfolio.vercel.app", // TODO: custom domain
+  url: "https://srithings.info",
 } as const;
 
 export type Site = typeof site;

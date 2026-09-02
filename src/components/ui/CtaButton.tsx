@@ -13,7 +13,7 @@ type Props = {
 export function CtaButton({
   variant = "primary",
   from,
-  children = "Book a call",
+  children = "Connect on LinkedIn",
   className = "",
 }: Props) {
   const base =
@@ -25,11 +25,11 @@ export function CtaButton({
 
   return (
     <a
-      href={site.calUrl}
+      href={site.linkedin}
       target="_blank"
       rel="noopener noreferrer"
       className={`${base} ${styles} ${className}`}
-      onClick={() => track("cta_book_click", { from })}
+      onClick={() => track("cta_click", { from })}
     >
       {children}
     </a>

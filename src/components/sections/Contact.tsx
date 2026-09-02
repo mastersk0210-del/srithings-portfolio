@@ -27,16 +27,17 @@ export function Contact() {
   }, []);
 
   return (
-    <Section id="contact" eyebrow="Contact" title="Let's talk about your model.">
+    <Section id="contact" eyebrow="Contact" title="Let's talk.">
       <div ref={ref} className="grid gap-10 md:grid-cols-2">
         <div>
           <p className="text-lg text-fg-dim">
-            {site.tagline} Book a 20-minute call and tell me what you are building.
+            Hiring for a data / ML role, or want a second pair of hands on a
+            pipeline? The fastest way to reach me is LinkedIn.
           </p>
           <div className="mt-6 flex flex-wrap gap-4">
             <CtaButton from="contact" />
             <a
-              href={`mailto:${site.email}`}
+              href={site.links.email}
               className="neon-border inline-flex items-center rounded-full px-6 py-3 font-display text-sm text-fg transition-colors hover:text-cyan"
             >
               Email me
@@ -45,8 +46,7 @@ export function Contact() {
           <div className="mt-8 flex gap-5 text-sm text-fg-dim">
             <a href={site.links.github} className="hover:text-cyan">GitHub</a>
             <a href={site.links.linkedin} className="hover:text-cyan">LinkedIn</a>
-            <a href={site.links.huggingface} className="hover:text-cyan">Hugging Face</a>
-            <a href={site.links.kaggle} className="hover:text-cyan">Kaggle</a>
+            <a href={site.url} className="hover:text-cyan">srithings.info</a>
           </div>
         </div>
 
@@ -75,7 +75,7 @@ export function Contact() {
             required
             name="message"
             rows={4}
-            placeholder="What are you working on?"
+            placeholder="What's the role or project?"
             className="w-full rounded-lg bg-[var(--bg)] px-4 py-3 text-sm outline-none ring-1 ring-[var(--border)] focus:ring-cyan"
           />
           <button
