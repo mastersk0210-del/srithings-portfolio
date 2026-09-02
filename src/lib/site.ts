@@ -3,10 +3,10 @@ export const site = {
   shortName: "Srikaran",
   role: "AI/ML Engineer",
   // hero headline
-  tagline: "I build the pipeline from raw data to production ML.",
+  tagline: "I'm an AI engineer who turns messy data into models that ship.",
   // sub-line under the headline
   specialization:
-    "Two years bridging data engineering and applied ML — ETL/ELT, data quality, and models that ship.",
+    "Two years bridging data engineering and applied ML — pipelines, data quality, training, evaluation, deployment.",
   location: "Dublin, Ireland",
   availability: "Open to work · Stamp 2 visa",
   email: "mastersk0210@gmail.com",
