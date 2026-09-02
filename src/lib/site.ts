@@ -16,8 +16,8 @@ export const site = {
     github: "https://github.com/mastersk07",
     linkedin: "https://www.linkedin.com/in/srikaran-sankar",
     email: "mailto:mastersk0210@gmail.com",
-    // TODO: replace with your real number (international format, no +/spaces) and handle
-    whatsapp: "https://wa.me/353000000000",
+    whatsapp: "https://wa.me/353894002480",
+    // TODO: replace with your Instagram handle
     instagram: "https://instagram.com/",
   },
   url: "https://srithings.info",
