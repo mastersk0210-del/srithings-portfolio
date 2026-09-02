@@ -20,12 +20,22 @@ export function Hero() {
       id="hero"
       className="relative flex min-h-[100svh] items-center overflow-hidden"
     >
-      {/* 3D / fallback backdrop */}
+      {/* neon wash behind the figure */}
+      <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(38%_46%_at_72%_46%,rgba(122,92,255,0.16),transparent_70%),radial-gradient(24%_30%_at_80%_66%,rgba(255,46,205,0.10),transparent_70%)]" />
+
+      {/* figure: 3D particle field, or a static photo fallback */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         {show3D ? (
           <ParticleField />
         ) : (
-          <div className="absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_40%,rgba(122,92,255,0.28),transparent_70%),radial-gradient(40%_40%_at_70%_70%,rgba(255,46,205,0.18),transparent_70%)]" />
+          hasWebGL !== null && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src="/avatar.jpg"
+              alt={`${site.name}, ${site.role}`}
+              className="absolute right-0 top-1/2 h-[86%] max-w-[52vw] -translate-y-1/2 object-contain opacity-95 [mask-image:radial-gradient(58%_72%_at_50%_50%,#000_58%,transparent_100%)] sm:h-[92%]"
+            />
+          )
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[var(--bg)]" />
       </div>
@@ -34,10 +44,10 @@ export function Hero() {
         <p className="mb-4 font-display text-sm uppercase tracking-[0.3em] text-cyan text-glow-cyan">
           {site.role}
         </p>
-        <h1 className="max-w-4xl font-display text-4xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
+        <h1 className="max-w-2xl font-display text-4xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
           {site.tagline}
         </h1>
-        <p className="mt-6 max-w-xl text-lg text-fg-dim">{site.specialization}</p>
+        <p className="mt-6 max-w-md text-lg text-fg-dim">{site.specialization}</p>
 
         <div className="mt-10 flex flex-wrap items-center gap-4">
           <CtaButton from="hero" />
