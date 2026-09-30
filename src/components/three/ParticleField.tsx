@@ -2,8 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import { buildAvatarPoints, type AvatarPoints } from "@/lib/avatarPoints";
+import { LOGOS } from "@/components/sections/Skills";
 
 /**
  * M3 hero: the photo (`public/avatar.jpg`) at rest, shattering into particles
@@ -79,6 +81,126 @@ function curl(x: number, y: number, z: number, t: number) {
     Math.sin(z * 1.5 - t * 0.8) - Math.cos(x * 1.9 + t * 0.6),
     Math.sin(x * 1.4 + t * 0.9) - Math.cos(y * 1.6 - t),
   ] as const;
+}
+
+/** skills that burst out of the photo while it's scattered */
+const BURST_SKILLS = [
+  "Python",
+  "PyTorch",
+  "TensorFlow",
+  "scikit-learn",
+  "Hugging Face",
+  "LangChain",
+  "pandas",
+  "PostgreSQL",
+  "FastAPI",
+  "Docker",
+  "MLflow",
+  "Google Cloud",
+];
+const burstLogos = BURST_SKILLS.flatMap((n) => LOGOS.filter((l) => l.name === n));
+
+/** timing (seconds): gap between badges, fade-in length, fade-out length, linger after the scroll stops */
+const STAGGER = 0.28;
+const FADE_IN = 1.4;
+const FADE_OUT = 0.9;
+const HOLD = 2.2;
+/** scroll energy that counts as "scattering" */
+const ON = 0.12;
+
+const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
+
+function SkillBurst({ energyRef }: { energyRef: React.RefObject<number> }) {
+  const anchors = useRef<(THREE.Group | null)[]>([]);
+  const chips = useRef<(HTMLDivElement | null)[]>([]);
+  const progress = useRef<number[]>(burstLogos.map(() => 0));
+  const burstStart = useRef(-1); // clock time the current burst began, -1 when idle
+  const lastActive = useRef(-Infinity);
+  const { size } = useThree();
+
+  // slots on an ellipse around the photo, staggered in/out so the ring isn't rigid
+  const slots = useMemo(
+    () =>
+      burstLogos.map((_, i) => {
+        const a = (i / burstLogos.length) * Math.PI * 2 + 0.3;
+        const r = i % 2 ? 1.0 : 1.14;
+        const cx = Math.cos(a);
+        // pull the left arc in so badges stay clear of the hero copy
+        return {
+          x: cx * (cx < 0 ? 1.25 : 1.8) * r,
+          // flattened + nudged down so the top arc clears the fixed nav
+          y: Math.sin(a) * 1.2 * r - 0.25,
+        };
+      }),
+    [],
+  );
+
+  useFrame((state, delta) => {
+    // on narrow screens the photo sits behind the copy — keep the badges out of it
+    const wide = size.width / Math.max(1, size.height) > 1.05;
+    const energy = wide ? energyRef.current : 0;
+    const t = state.clock.elapsedTime;
+    const dt = Math.min(0.05, delta);
+
+    // a burst starts when the photo scatters and lingers a moment after it settles
+    if (energy > ON) lastActive.current = t;
+    const active = t - lastActive.current < HOLD;
+    if (active && burstStart.current < 0) burstStart.current = t;
+    if (!active) burstStart.current = -1;
+
+    slots.forEach((s, i) => {
+      const anchor = anchors.current[i];
+      const chip = chips.current[i];
+      if (!anchor || !chip) return;
+
+      // one by one around the ring on the way out; all drift home together
+      const due = active && t - burstStart.current > i * STAGGER;
+      const prev = progress.current[i];
+      const p = due
+        ? Math.min(1, prev + dt / FADE_IN)
+        : Math.max(0, prev - dt / FADE_OUT);
+      progress.current[i] = p;
+
+      if (p === 0) {
+        if (chip.style.opacity !== "0") chip.style.opacity = "0";
+        return;
+      }
+      // emerge from the centre of the photo and ease out to the slot
+      const e = easeOutCubic(p);
+      anchor.position.set(
+        s.x * e + Math.sin(t * 0.6 + i) * 0.04 * e,
+        s.y * e + Math.cos(t * 0.5 + i * 2) * 0.04 * e,
+        0.3,
+      );
+      chip.style.opacity = String(Math.pow(p, 1.4));
+      chip.style.filter = `blur(${((1 - e) * 6).toFixed(2)}px)`;
+      chip.style.transform = `scale(${(0.82 + 0.18 * e).toFixed(3)})`;
+    });
+  });
+
+  return (
+    <>
+      {burstLogos.map(({ name, Icon, color }, i) => (
+        <group key={name} ref={(el) => void (anchors.current[i] = el)}>
+          <Html center zIndexRange={[5, 0]} pointerEvents="none">
+            <div
+              ref={(el) => void (chips.current[i] = el)}
+              style={{ opacity: 0 }}
+              className="flex items-center gap-2 whitespace-nowrap rounded-full border border-[color-mix(in_oklab,var(--neon-violet)_35%,transparent)] bg-[color-mix(in_oklab,var(--neon-violet)_12%,rgba(5,6,10,0.6))] px-3.5 py-1.5 font-display text-xs font-medium text-fg/85 shadow-[0_0_28px_rgba(122,92,255,0.22),inset_0_0_12px_rgba(255,46,205,0.06)] backdrop-blur-md"
+            >
+              {/* brand colour pulled toward the hero's violet wash */}
+              <Icon
+                aria-hidden
+                className="size-3.5"
+                style={{ color: `color-mix(in oklab, ${color} 55%, #c9bfff)` }}
+              />
+              {name}
+            </div>
+          </Html>
+        </group>
+      ))}
+    </>
+  );
 }
 
 type ScatterProps = {
@@ -265,6 +387,7 @@ function Scatter({ data, energyRef, visibleRef }: ScatterProps) {
           sizeAttenuation
         />
       </points>
+      <SkillBurst energyRef={energyRef} />
     </group>
   );
 }

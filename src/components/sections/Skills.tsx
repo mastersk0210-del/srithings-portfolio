@@ -43,7 +43,7 @@ import { Section } from "@/components/ui/Section";
  * LangChain, Ollama — so on a near-black page they use the brand's own
  * dark-mode treatment: white.
  */
-const LOGOS: { name: string; Icon: IconType; color: string }[] = [
+export const LOGOS: { name: string; Icon: IconType; color: string }[] = [
   // languages
   { name: "Python", Icon: SiPython, color: "#3776AB" },
   { name: "R", Icon: SiR, color: "#276DC3" },
